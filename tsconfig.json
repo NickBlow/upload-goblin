@@ -14,6 +14,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "types": [
+      "node",
       "@cloudflare/workers-types/experimental",
       "@cloudflare/vitest-pool-workers"
     ],
