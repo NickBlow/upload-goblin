@@ -16,7 +16,7 @@ An Alchemy-powered file uploader for Cloudflare Workers with R2 and S3 support. 
 ### Installation
 
 ```bash
-bun add @file-goblin/goblin-uploader alchemy
+bun add @file-goblin/upload-goblin alchemy
 ```
 
 ### Basic Example
@@ -269,7 +269,7 @@ Your deployed worker automatically provides:
 
 - **`PUT /upload/:fileId`** - Upload files with validation
 - **`GET /download/:fileId`** - Download files with optional validation
-- **Query parameters**: 
+- **Query parameters**:
   - Uploads: `?fileName=example.pdf` (optional)
   - Downloads: `?signature=token` (optional), `?disposition=inline` (optional, defaults to attachment)
 - **Headers**: `Authorization`, `Content-Type`, `X-Metadata-*` for custom metadata
@@ -337,12 +337,12 @@ const uploader = await GoblinUploader("context-uploader", {
   name: "context-aware-uploader",
   validation: "secret-key",
   storage: { type: "r2", bucket },
-  
+
   // Extract context from request
   contextFn: async (req) => {
     const token = req.headers.get("Authorization");
     const user = await validateToken(token);
-    
+
     return {
       userId: user.id,
       tenantId: user.tenantId,
@@ -362,15 +362,15 @@ const uploader = await GoblinUploader("download-uploader", {
   name: "file-uploader-with-downloads",
   uploadValidation: "upload-secret-key",
   storage: { type: "r2", bucket },
-  
+
   // Download validation options:
   downloadValidation: "download-secret-key", // Require signature for downloads
   // OR
   downloadValidation: async ({ req, fileId, context }) => {
     // Custom download validation
     const user = await getCurrentUser(req);
-    return fileId.startsWith(`user-${user.id}/`) 
-      ? { valid: true } 
+    return fileId.startsWith(`user-${user.id}/`)
+      ? { valid: true }
       : { valid: false, error: "Access denied" };
   },
   // OR
