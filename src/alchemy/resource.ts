@@ -136,7 +136,6 @@ export async function GoblinUploader(
   // Create the worker
   const worker = Worker(name, import.meta, {
     name: config.name,
-    compatibilityFlags: ["nodejs_compat"],
     compatibilityDate: "2025-03-10",
 
     async fetch(request: Request) {
