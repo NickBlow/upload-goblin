@@ -1,4 +1,4 @@
-import { type Secret } from "alchemy";
+import { isSecret, type Secret } from "alchemy";
 import { R2Bucket, Worker } from "alchemy/cloudflare";
 import { createUploader } from "../uploader";
 import { validateSignature } from "../signature";
@@ -16,7 +16,7 @@ export interface GoblinUploaderResourceConfig {
 
   // Validation: either a secret string or custom validator function
   uploadValidation:
-    | string
+    | Secret
     | ((
         request: ValidationRequest,
       ) =>
@@ -39,7 +39,7 @@ export interface GoblinUploaderResourceConfig {
 
   // Download validation: string (signature), function (custom), or undefined (public)
   downloadValidation?:
-    | string
+    | Secret
     | ((request: {
         req: Request;
         fileId: string;
@@ -80,50 +80,52 @@ export async function GoblinUploader(
   }
 
   // Set up validation
-  const validateUploadRequest =
-    typeof config.uploadValidation === "string"
-      ? async ({ req }: ValidationRequest) => {
-          const signature =
-            req.headers.get("Authorization")?.replace("Bearer ", "") ||
-            new URL(req.url).searchParams.get("signature");
+  const validateUploadRequest = isSecret(config.uploadValidation)
+    ? async ({ req }: ValidationRequest) => {
+        const signature =
+          req.headers.get("Authorization")?.replace("Bearer ", "") ||
+          new URL(req.url).searchParams.get("signature");
 
-          if (!signature) {
-            return err({ code: 401, message: "Signature required" });
-          }
-
-          const validation = validateSignature(
-            signature,
-            config.uploadValidation as string,
-            req,
-          );
-          return validation.valid
-            ? ok()
-            : err({
-                code: validation.error?.includes("Content type")
-                  ? 415
-                  : validation.error?.includes("File too large")
-                    ? 413
-                    : 401,
-                message: validation.error || "Invalid signature",
-              });
+        if (!signature) {
+          return err({ code: 401, message: "Signature required" });
         }
-      : async (request: ValidationRequest) => {
-          //@ts-ignore TODO: not sure why types are not correct here
-          const validation = await config.uploadValidation(request);
-          return validation.valid
-            ? ok()
-            : err({
-                code: 401,
-                message: validation.error || "Validation failed",
-              });
-        };
+
+        const validation = validateSignature(
+          signature,
+          // TODO: Why is the type guard not working?
+          (config.uploadValidation as Secret).unencrypted,
+          req,
+        );
+        return validation.valid
+          ? ok()
+          : err({
+              code: validation.error?.includes("Content type")
+                ? 415
+                : validation.error?.includes("File too large")
+                  ? 413
+                  : 401,
+              message: validation.error || "Invalid signature",
+            });
+      }
+    : async (request: ValidationRequest) => {
+        //@ts-ignore TODO: not sure why types are not correct here
+        const validation = await config.uploadValidation(request);
+        return validation.valid
+          ? ok()
+          : err({
+              code: 401,
+              message: validation.error || "Validation failed",
+            });
+      };
 
   // Create the uploader
   const uploaderConfig: UploaderConfig = {
     storage,
     //@ts-ignore TODO: not sure why types are not correct here
     validateUploadRequest,
-    downloadValidation: config.downloadValidation,
+    downloadValidation: isSecret(config.downloadValidation)
+      ? config.downloadValidation.unencrypted
+      : config.downloadValidation,
     preUpload: config.preUpload,
     postUpload: config.postUpload,
     contextFn: config.contextFn,
