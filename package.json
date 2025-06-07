@@ -1,6 +1,6 @@
 {
   "name": "@file-goblin/upload-goblin",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "description": "Alchemy-powered file uploader for Cloudflare Workers with R2 and S3 support",
   "main": "dist/index.mjs",
   "module": "dist/index.mjs",
