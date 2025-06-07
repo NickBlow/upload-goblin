@@ -1,0 +1,59 @@
+{
+  "name": "@file-goblin/upload-goblin",
+  "version": "0.3.2",
+  "description": "Alchemy-powered file uploader for Cloudflare Workers with R2 and S3 support",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "bunx tsup src/index.ts --format esm --dts --minify --clean",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "file-upload",
+    "alchemy",
+    "cloudflare-workers",
+    "cloudflare-r2",
+    "s3-compatible",
+    "signed-upload",
+    "edge-computing",
+    "serverless",
+    "upload-service",
+    "direct-upload",
+    "presigned-upload",
+    "workers",
+    "edge-storage"
+  ],
+  "author": "Nick Blow",
+  "license": "MIT",
+  "dependencies": {
+    "aws4fetch": "^1.0.17"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-pool-workers": "^0.8.36",
+    "@cloudflare/workers-types": "^4.20250606.0",
+    "@faker-js/faker": "^8.3.1",
+    "@types/node": "^20.10.5",
+    "expect-type": "^1.2.1",
+    "tsup": "^8.5.0",
+    "typescript": "^5.3.3",
+    "vitest": "^3.2.2"
+  },
+  "files": [
+    "dist/**/*",
+    "src/examples/**/*",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/file-goblin/goblin-uploader.git"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependencies": {
+    "alchemy": "^0.24.1"
+  }
+}

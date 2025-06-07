@@ -1,0 +1,39 @@
+name: Build & publish with Bun
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  bun-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      # 1 – Get the code
+      - uses: actions/checkout@v4
+
+      # 2 – Set up Bun (no Node needed)
+      - uses: oven-sh/setup-bun@v2
+
+      # 3 – Bring up LocalStack & create S3 bucket
+      - name: Install dependencies for LocalStack script
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl jq
+      - name: Start LocalStack and create S3 bucket
+        run: ./scripts/setup-local-infra.sh
+
+      # 4 – Install, test, build
+      - run: bun install --frozen-lockfile
+      - run: bun run test
+      - run: bun run build
+
+      # 5 – Publish to npm registry
+      - name: bun publish
+        env:
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          bun publish --access public
