@@ -25,7 +25,8 @@ Create a simple file uploader with HMAC signature validation:
 
 ```typescript
 import alchemy from "alchemy";
-import { GoblinUploader } from "@file-goblin/goblin-uploader";
+import { GoblinUploader } from "@file-goblin/upload-goblin";
+import { R2Bucket } from "alchemy/cloudflare";
 
 const app = await alchemy("cloudflare-worker", {
   stage: process.env.STAGE || "dev",
@@ -33,7 +34,7 @@ const app = await alchemy("cloudflare-worker", {
 
 const uploader = await GoblinUploader("file-uploader", {
   name: "my-file-uploader",
-  uploadValidation: alchemy.Secret(process.env.UPLOAD_SECRET_KEY),
+  uploadValidation: alchemy.secret(process.env.UPLOAD_SECRET_KEY),
   storage: {
     type: "r2",
     bucket: await R2Bucket("uploads", {
@@ -121,8 +122,8 @@ import { R2Bucket } from "alchemy/cloudflare";
 const bucket = await R2Bucket("my-bucket", {
   name: "my-uploads-bucket",
   // Optional: specify credentials
-  accessKey: alchemy.Secret(process.env.R2_ACCESS_KEY_ID),
-  secretAccessKey: alchemy.Secret(process.env.R2_SECRET_ACCESS_KEY)
+  accessKey: alchemy.secret(process.env.R2_ACCESS_KEY_ID),
+  secretAccessKey: alchemy.secret(process.env.R2_SECRET_ACCESS_KEY)
 });
 
 const uploader = await GoblinUploader("uploader", {
@@ -146,8 +147,8 @@ const uploader = await GoblinUploader("s3-uploader", {
     region: "us-east-1",
     endpoint: "https://s3.amazonaws.com/my-bucket",
     credentials: {
-      accessKeyId: alchemy.Secret(process.env.AWS_ACCESS_KEY_ID),
-      secretAccessKey: alchemy.Secret(process.env.AWS_SECRET_ACCESS_KEY)
+      accessKeyId: alchemy.secret(process.env.AWS_ACCESS_KEY_ID),
+      secretAccessKey: alchemy.secret(process.env.AWS_SECRET_ACCESS_KEY)
     }
   }
 });
@@ -165,7 +166,7 @@ Use a secret key for cryptographic signature validation. **Important**: You must
 // Uploader configuration
 const uploader = await GoblinUploader("uploader", {
   name: "signature-uploader",
-  uploadValidation: alchemy.Secret(process.env.UPLOAD_SECRET_KEY), // String = signature validation
+  uploadValidation: alchemy.secret(process.env.UPLOAD_SECRET_KEY), // String = signature validation
   storage: { type: "r2", bucket }
 });
 ```
