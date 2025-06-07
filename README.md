@@ -19,6 +19,8 @@ An Alchemy-powered file uploader for Cloudflare Workers with R2 and S3 support. 
 bun add @file-goblin/upload-goblin alchemy
 ```
 
+**Note**: This library uses [Alchemy](https://alchemy.run) for deployment and infrastructure management. For teams or production deployments, you may want to use a different state store like the [R2 backend](https://alchemy.run/docs/concepts/state.html) instead of the default file-based state.
+
 ### Basic Example
 
 Create a simple file uploader with HMAC signature validation:
@@ -30,6 +32,8 @@ import { R2Bucket } from "alchemy/cloudflare";
 
 const app = await alchemy("cloudflare-worker", {
   stage: process.env.STAGE || "dev",
+  // passphrase used to encrypt your state at rest
+  password: process.env.PASSPHRASE,
 });
 
 const uploader = await GoblinUploader("file-uploader", {
@@ -55,6 +59,8 @@ import { R2Bucket } from "alchemy/cloudflare";
 
 const app = await alchemy("cloudflare-worker", {
   stage: process.env.STAGE || "dev",
+  // passphrase used to encrypt your state at rest
+  password: process.env.PASSPHRASE,
 });
 
 const bucket = await R2Bucket("uploads", {
@@ -281,6 +287,9 @@ Your deployed worker automatically provides:
 # Required for signature validation
 UPLOAD_SECRET_KEY=your-secret-key-here
 
+# Required for Alchemy state encryption
+PASSPHRASE=your-secure-passphrase
+
 # Required for R2 storage (if not using Alchemy secrets)
 R2_ACCESS_KEY_ID=your-r2-access-key
 R2_SECRET_ACCESS_KEY=your-r2-secret-key
@@ -290,7 +299,6 @@ AWS_ACCESS_KEY_ID=your-aws-access-key
 AWS_SECRET_ACCESS_KEY=your-aws-secret-key
 
 # Optional: Alchemy configuration
-ALCHEMY_PASSWORD=your-alchemy-password
 BRANCH_PREFIX=dev
 ```
 
