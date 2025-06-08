@@ -43,11 +43,7 @@ Given these commit messages and the diff, decide whether the next semantic versi
 
 Return only valid JSON with exactly two fields: \"bump\" and \"notes\".
 
-Until the first major release (i.e. pre 1.0.0), the bump should be \"minor\" or \"patch\" only.
-
-Use semantic versioning principles to determine the appropriate bump.
-
-When the commit message contains the word \"1.0.0\", the bump should be \"major\".
+The bump should ONLY be \"minor\" or \"patch\" UNLESS the commit message contains the word \"breaking\", or specifically mentions the version number (i.e. \"1.0.0\"), in which case the bump should be \"major\".
 
 Commit messages:
 $COMMITS
