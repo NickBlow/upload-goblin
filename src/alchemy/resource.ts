@@ -1,5 +1,5 @@
 import { isSecret, type Secret } from "alchemy";
-import { R2Bucket, Worker } from "alchemy/cloudflare";
+import { R2Bucket, Worker, type FetchWorkerProps } from "alchemy/cloudflare";
 import { createUploader } from "../uploader";
 import { validateSignature } from "../signature";
 import { R2BlobStorage } from "../storage/r2";
@@ -53,6 +53,11 @@ export interface GoblinUploaderResourceConfig {
   preUpload?: UploaderConfig["preUpload"];
   postUpload?: UploaderConfig["postUpload"];
   contextFn?: UploaderConfig["contextFn"];
+
+  workerConfig?: Pick<
+    FetchWorkerProps,
+    "url" | "env" | "observability" | "accountId" | "apiKey" | "apiToken"
+  >;
 }
 
 export async function GoblinUploader(
@@ -132,22 +137,23 @@ export async function GoblinUploader(
   };
 
   const uploader = createUploader(uploaderConfig);
-
   // Create the worker
   const worker = Worker(name, import.meta, {
     name: config.name,
     compatibilityDate: "2025-03-10",
+    ...config.workerConfig,
+    url: config.workerConfig?.url === false ? false : true,
 
     async fetch(request: Request) {
       const url = new URL(request.url);
 
-      // Handle upload requests - PUT /upload/:fileId
-      if (request.method === "PUT" && url.pathname.startsWith("/upload/")) {
+      // Handle upload requests - PUT /uploads/:fileId
+      if (request.method === "PUT" && url.pathname.startsWith("/uploads/")) {
         return uploader.handleUpload(request);
       }
 
-      // Handle download requests - GET /download/:fileId
-      if (request.method === "GET" && url.pathname.startsWith("/download/")) {
+      // Handle download requests - GET /uploads/:fileId
+      if (request.method === "GET" && url.pathname.startsWith("/uploads/")) {
         return uploader.handleDownload(request);
       }
 

@@ -65,7 +65,7 @@ function validateUploadSignature(string $token, string $secretKey): array {
 function exampleLaravelRoute() {
     // routes/api.php
     /*
-    Route::post('/upload/generate-signature', function (Request $request) {
+    Route::post('/uploads/generate-signature', function (Request $request) {
         $request->validate([
             'fileName' => 'required|string|max:255',
             'fileSize' => 'required|integer|max:10485760', // 10MB
@@ -106,7 +106,7 @@ function exampleLaravelRoute() {
         ], env('UPLOAD_SECRET_KEY'));
 
         $workerUrl = env('UPLOADER_WORKER_URL', 'https://your-uploader.your-subdomain.workers.dev');
-        $uploadUrl = "{$workerUrl}/upload/" . urlencode($fileId) . "?fileName=" . urlencode($request->fileName);
+        $uploadUrl = "{$workerUrl}/uploads/" . urlencode($fileId) . "?fileName=" . urlencode($request->fileName);
 
         return response()->json([
             'signature' => $signature,

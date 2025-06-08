@@ -63,7 +63,7 @@ Complete example showing:
 - Unique file ID generation
 - Client-side React component example
 
-**Pages Router** (`pages/api/upload/generate-signature.ts`):
+**Pages Router** (`pages/api/uploads/generate-signature.ts`):
 ```typescript
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { fileName, fileSize, fileType, userId } = req.body;
@@ -82,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 }
 ```
 
-**App Router** (`app/api/upload/generate-signature/route.ts`):
+**App Router** (`app/api/uploads/generate-signature/route.ts`):
 ```typescript
 export async function POST(request: Request) {
   // Similar implementation with Response.json()
@@ -158,7 +158,7 @@ Your client should:
 
 ```javascript
 // 1. Get signature from your server
-const response = await fetch('/api/upload/generate-signature', {
+const response = await fetch('/api/uploads/generate-signature', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify({

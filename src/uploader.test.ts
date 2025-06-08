@@ -33,7 +33,7 @@ describe("Uploader", () => {
     const uploader = createUploader(baseConfig);
 
     const request = new Request(
-      "https://example.com/upload/test-file-123?fileName=test.jpg",
+      "https://example.com/uploads/test-file-123?fileName=test.jpg",
       {
         method: "PUT",
         headers: {
@@ -78,7 +78,7 @@ describe("Uploader", () => {
       validateUploadRequest: mockValidateUploadRequest,
     });
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       headers: {
         Authorization: "Bearer invalid-signature",
@@ -105,7 +105,7 @@ describe("Uploader", () => {
       validateUploadRequest: mockValidateUploadRequest,
     });
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       body: "test file content",
     });
@@ -120,7 +120,7 @@ describe("Uploader", () => {
   it("should handle missing file ID", async () => {
     const uploader = createUploader(baseConfig);
 
-    const request = new Request("https://example.com/upload/", {
+    const request = new Request("https://example.com/uploads/", {
       method: "PUT",
       body: "test file content",
     });
@@ -135,7 +135,7 @@ describe("Uploader", () => {
   it("should handle missing request body", async () => {
     const uploader = createUploader(baseConfig);
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
     });
 
@@ -153,7 +153,7 @@ describe("Uploader", () => {
       preUpload: mockPreUpload,
     });
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       body: "test file content",
     });
@@ -196,7 +196,7 @@ describe("Uploader", () => {
     it("should handle public download without validation", async () => {
       const uploader = createUploader(baseConfig);
 
-      const request = new Request("https://example.com/download/test-file-123");
+      const request = new Request("https://example.com/uploads/test-file-123");
 
       const response = await uploader.handleDownload(request);
 
@@ -217,7 +217,7 @@ describe("Uploader", () => {
         downloadValidation: "secret-key",
       });
 
-      const request = new Request("https://example.com/download/test-file-123");
+      const request = new Request("https://example.com/uploads/test-file-123");
 
       const response = await uploader.handleDownload(request);
       const result = await response.json<any>();
@@ -233,7 +233,7 @@ describe("Uploader", () => {
         downloadValidation: mockDownloadValidation,
       });
 
-      const request = new Request("https://example.com/download/test-file-123");
+      const request = new Request("https://example.com/uploads/test-file-123");
 
       const response = await uploader.handleDownload(request);
 
@@ -255,7 +255,7 @@ describe("Uploader", () => {
         downloadValidation: mockDownloadValidation,
       });
 
-      const request = new Request("https://example.com/download/test-file-123");
+      const request = new Request("https://example.com/uploads/test-file-123");
 
       const response = await uploader.handleDownload(request);
       const result = await response.json<any>();
@@ -268,7 +268,7 @@ describe("Uploader", () => {
     it("should handle missing file ID", async () => {
       const uploader = createUploader(baseConfig);
 
-      const request = new Request("https://example.com/download/");
+      const request = new Request("https://example.com/uploads/");
 
       const response = await uploader.handleDownload(request);
       const result = await response.json<any>();
@@ -284,7 +284,7 @@ describe("Uploader", () => {
 
       const uploader = createUploader(baseConfig);
 
-      const request = new Request("https://example.com/download/missing-file");
+      const request = new Request("https://example.com/uploads/missing-file");
 
       const response = await uploader.handleDownload(request);
       const result = await response.json<any>();
@@ -305,7 +305,7 @@ describe("Uploader", () => {
 
       const uploader = createUploader(baseConfig);
 
-      const request = new Request("https://example.com/download/test-file-123");
+      const request = new Request("https://example.com/uploads/test-file-123");
 
       const response = await uploader.handleDownload(request);
 
@@ -317,7 +317,7 @@ describe("Uploader", () => {
     it("should set CORS headers for browser downloads", async () => {
       const uploader = createUploader(baseConfig);
 
-      const request = new Request("https://example.com/download/test-file-123");
+      const request = new Request("https://example.com/uploads/test-file-123");
 
       const response = await uploader.handleDownload(request);
 
@@ -328,7 +328,7 @@ describe("Uploader", () => {
     it("should use attachment disposition by default", async () => {
       const uploader = createUploader(baseConfig);
 
-      const request = new Request("https://example.com/download/test-file-123");
+      const request = new Request("https://example.com/uploads/test-file-123");
 
       const response = await uploader.handleDownload(request);
 
@@ -341,7 +341,7 @@ describe("Uploader", () => {
       const uploader = createUploader(baseConfig);
 
       const request = new Request(
-        "https://example.com/download/test-file-123?disposition=inline",
+        "https://example.com/uploads/test-file-123?disposition=inline",
       );
 
       const response = await uploader.handleDownload(request);
@@ -355,7 +355,7 @@ describe("Uploader", () => {
       const uploader = createUploader(baseConfig);
 
       const request = new Request(
-        "https://example.com/download/test-file-123?disposition=invalid",
+        "https://example.com/uploads/test-file-123?disposition=invalid",
       );
 
       const response = await uploader.handleDownload(request);
@@ -372,7 +372,7 @@ describe("Uploader", () => {
         contextFn: mockContextFn,
       });
 
-      const request = new Request("https://example.com/download/test-file-123");
+      const request = new Request("https://example.com/uploads/test-file-123");
 
       await uploader.handleDownload(request);
 
@@ -407,7 +407,7 @@ describe("Uploader", () => {
       storage: mockStorage,
     });
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       headers: {
         "Content-Type": "text/plain",
@@ -461,7 +461,7 @@ describe("Uploader", () => {
       storage: mockStorage,
     });
 
-    const request = new Request("https://example.com/upload/image-file-123", {
+    const request = new Request("https://example.com/uploads/image-file-123", {
       method: "PUT",
       headers: {
         "Content-Type": "image/png",
@@ -541,7 +541,7 @@ describe("Uploader", () => {
       },
     });
 
-    const request = new Request("https://example.com/upload/large-file-123", {
+    const request = new Request("https://example.com/uploads/large-file-123", {
       method: "PUT",
       headers: {
         "Content-Type": "application/octet-stream",
@@ -585,7 +585,7 @@ describe("Uploader", () => {
     });
 
     const request = new Request(
-      "https://example.com/upload/test-file-123?fileName=test.jpg",
+      "https://example.com/uploads/test-file-123?fileName=test.jpg",
       {
         method: "PUT",
         headers: {
@@ -617,7 +617,7 @@ describe("Uploader", () => {
       preUpload: mockPreUpload,
     });
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       body: "test file content",
     });
@@ -633,7 +633,7 @@ describe("Uploader", () => {
   it("should extract metadata from custom headers", async () => {
     const uploader = createUploader(baseConfig);
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       headers: {
         "Content-Type": "image/jpeg",
@@ -660,7 +660,7 @@ describe("Uploader", () => {
   it("should call validateUploadRequest with correct parameters", async () => {
     const uploader = createUploader(baseConfig);
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       body: "test file content",
     });
@@ -685,7 +685,7 @@ describe("Uploader", () => {
       storage: mockStorage,
     });
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       body: "test file content",
     });
@@ -709,7 +709,7 @@ describe("Uploader", () => {
       postUpload: mockPostUpload,
     });
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       body: "test file content",
     });
@@ -737,7 +737,7 @@ describe("Uploader", () => {
       contextFn: mockContextFn,
     });
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       body: "test file content",
     });
@@ -756,7 +756,7 @@ describe("Uploader", () => {
     const uploader = createUploader(baseConfig);
 
     const request = new Request(
-      "https://example.com/upload/test-file-123?fileName=my-file.pdf",
+      "https://example.com/uploads/test-file-123?fileName=my-file.pdf",
       {
         method: "PUT",
         body: "test file content",
@@ -778,7 +778,7 @@ describe("Uploader", () => {
   it("should work without fileName query parameter", async () => {
     const uploader = createUploader(baseConfig);
 
-    const request = new Request("https://example.com/upload/test-file-123", {
+    const request = new Request("https://example.com/uploads/test-file-123", {
       method: "PUT",
       body: "test file content",
     });

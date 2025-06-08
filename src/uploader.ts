@@ -24,7 +24,7 @@ export function createUploader<
           ? await config.contextFn(req)
           : ({} as TContext);
 
-        // Extract file ID from URL path (assumes /upload/:fileId)
+        // Extract file ID from URL path (assumes /uploads/:fileId)
         const url = new URL(req.url);
         const pathParts = url.pathname.split("/");
         const fileId = pathParts[pathParts.length - 1];
@@ -197,7 +197,7 @@ export function createUploader<
           ? await config.contextFn(req)
           : ({} as TContext);
 
-        // Extract file ID from URL path (assumes /download/:fileId)
+        // Extract file ID from URL path (assumes /uploads/:fileId)
         const url = new URL(req.url);
         const pathParts = url.pathname.split("/");
         const fileId = pathParts[pathParts.length - 1];

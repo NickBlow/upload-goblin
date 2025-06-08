@@ -221,17 +221,15 @@ const imageSignature = generateUploadSignature({
 
 Once deployed, upload files from your client:
 
-```typescript
+```javascript
 // Generate upload signature (server-side)
 const signature = generateUploadSignature({
   fileId: `user-${userId}/document.pdf`,
   expiresAt: Date.now() + 30 * 60 * 1000
 }, process.env.UPLOAD_SECRET_KEY);
 
-// Upload file (client-side)
-```javascript
 // Upload a file with PUT request
-const uploadResponse = await fetch(`https://your-worker.dev/upload/${fileId}?fileName=${encodeURIComponent(file.name)}`, {
+const uploadResponse = await fetch(`https://your-worker.dev/uploads/${fileId}?fileName=${encodeURIComponent(file.name)}`, {
   method: "PUT",
   headers: {
     "Authorization": `Bearer ${signature}`,
@@ -248,14 +246,14 @@ if (uploadResponse.ok) {
 }
 
 // Download a file as attachment (default)
-const downloadResponse = await fetch(`https://your-worker.dev/download/${fileId}`, {
+const downloadResponse = await fetch(`https://your-worker.dev/uploads/${fileId}`, {
   headers: {
     "Authorization": `Bearer ${downloadSignature}` // Only if download validation is configured
   }
 });
 
 // Download a file for inline viewing (e.g., images, PDFs in browser)
-const inlineResponse = await fetch(`https://your-worker.dev/download/${fileId}?disposition=inline`);
+const inlineResponse = await fetch(`https://your-worker.dev/uploads/${fileId}?disposition=inline`);
 
 if (downloadResponse.ok) {
   // File content in response body
@@ -264,18 +262,18 @@ if (downloadResponse.ok) {
   const blob = await downloadResponse.blob();
   const fileName = downloadResponse.headers.get("Content-Disposition")?.match(/filename="(.+)"/)?.[1];
 }
+```
 
 **Content Disposition Behavior:**
 - `attachment` (default): Forces download dialog in browsers - file is saved to disk
 - `inline`: Displays content directly in browser when possible (images, PDFs, videos, etc.)
-```
 
 ## Generated Endpoints
 
 Your deployed worker automatically provides:
 
-- **`PUT /upload/:fileId`** - Upload files with validation
-- **`GET /download/:fileId`** - Download files with optional validation
+- **`PUT /uploads/:fileId`** - Upload files with validation
+- **`GET /uploads/:fileId`** - Download files with optional validation
 - **Query parameters**:
   - Uploads: `?fileName=example.pdf` (optional)
   - Downloads: `?signature=token` (optional), `?disposition=inline` (optional, defaults to attachment)
@@ -406,10 +404,10 @@ const uploader = createUploader({
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method === "PUT" && request.url.includes("/upload/")) {
+    if (request.method === "PUT" && request.url.includes("/uploads/")) {
       return uploader.handleUpload(request);
     }
-    if (request.method === "GET" && request.url.includes("/download/")) {
+    if (request.method === "GET" && request.url.includes("/uploads/")) {
       return uploader.handleDownload(request);
     }
     return new Response("Not found", { status: 404 });

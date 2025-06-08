@@ -1,5 +1,5 @@
-// pages/api/upload/generate-signature.ts
-// or app/api/upload/generate-signature/route.ts (App Router)
+// pages/api/uploads/generate-signature.ts
+// or app/api/uploads/generate-signature/route.ts (App Router)
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { generateUploadSignature } from '@file-goblin/goblin-uploader';
@@ -92,7 +92,7 @@ export default async function handler(
 
     // Your worker URL (replace with your actual deployed worker URL)
     const workerUrl = process.env.UPLOADER_WORKER_URL || 'https://your-uploader.your-subdomain.workers.dev';
-    const uploadUrl = `${workerUrl}/upload/${encodeURIComponent(fileId)}?fileName=${encodeURIComponent(fileName)}`;
+    const uploadUrl = `${workerUrl}/uploads/${encodeURIComponent(fileId)}?fileName=${encodeURIComponent(fileName)}`;
 
     const response: UploadResponse = {
       signature,
@@ -164,7 +164,7 @@ export async function POST(request: Request) {
 
     // Your worker URL (replace with your actual deployed worker URL)
     const workerUrl = process.env.UPLOADER_WORKER_URL || 'https://your-uploader.your-subdomain.workers.dev';
-    const uploadUrl = `${workerUrl}/upload/${encodeURIComponent(fileId)}?fileName=${encodeURIComponent(fileName)}`;
+    const uploadUrl = `${workerUrl}/uploads/${encodeURIComponent(fileId)}?fileName=${encodeURIComponent(fileName)}`;
 
     const response: UploadResponse = {
       signature,
@@ -203,7 +203,7 @@ export function FileUploader({ userId }: { userId: string }) {
 
     try {
       // 1. Get upload signature from your API
-      const signatureResponse = await fetch('/api/upload/generate-signature', {
+      const signatureResponse = await fetch('/api/uploads/generate-signature', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
